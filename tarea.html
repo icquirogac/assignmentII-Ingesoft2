@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <title>Ejemplo de Pattern Design</title>
-
     <link
         rel="stylesheet"
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -14,97 +13,147 @@
 <body>
     <div class="container">
         <br>
-
-        <form>
+        <label>Explicación:</label>
+        <br>
+        <label>El programa tomara la conjunto de enteros que seleccione en la lista de elementos, 
+            aplicara la funcion 1 (que esta definida de un conjunto de elementos a un entero) y 
+            lo que retorne sera el argumento que utilizará la función 2 (que esta definida de 
+            los enteros a los enteros)</label>
+        <form >
             <div class="form-group">
-                <label for="exampleInputEmail1">Entradas</label>
-
                 <div class="container">
                     <div class="row">
                         <div class="col-sm">
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="input1"
-                                placeholder="Ingresar Numero"
-                            ></input>
+                            <label>Funcion 1</label>
+
+                            <select id="fun1" class="form-control">
+                                <option value="suma">Suma</option>
+
+                                <option value="mult">Multiplicación</option>
+
+                                <option value="max">Máximo</option>
+
+                                <option value="min">Mínimo</option>
+                            </select>
                         </div>
 
                         <div class="col-sm">
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="input2"
-                                placeholder="Ingresar Numero"
-                            ></input>
+                            <label>Funcion 2</label>
+
+                            <select id="fun2" class="form-control">
+                                <option value="x2">x2</option>
+
+                                <option value="pow">Cuadrado</option>
+
+                                <option value="p1">+ 1</option>
+
+                                <option value="sum">Suma hasta</option>
+                            </select>
                         </div>
 
                         <div class="col-sm">
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="input3"
-                                placeholder="Ingresar Numero"
-                            ></input>
+                            <label>Elementos</label>
+
+                            <select id="elements" class="form-control">
+                                <option value="1">1 2 3 4</option>
+
+                                <option value="2">2 1 3 0</option>
+
+                                <option value="3">10 15 2 60</option>
+
+                                <option value="4">10 9 8 7</option>
+                            </select>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
 
-        <div class="custom-control custom-radio custom-control-inline">
-            <input
-                type="radio"
-                id="customRadioInline1"
-                name="customRadioInline1"
-                class="custom-control-input"
-            ></input>
-
-            <label
-                class="custom-control-label"
-                for="customRadioInline1"
-            >Suma</label>
-        </div>
-
-        <div class="custom-control custom-radio custom-control-inline">
-            <input
-                type="radio"
-                id="customRadioInline2"
-                name="customRadioInline1"
-                class="custom-control-input"
-            ></input>
-
-            <label
-                class="custom-control-label"
-                for="customRadioInline2"
-            >
-                Resta
-            </label>
-        </div>
-
-        <div class="custom-control custom-radio custom-control-inline">
-                <input
-                    type="radio"
-                    id="customRadioInline3"
-                    name="customRadioInline1"
-                    class="custom-control-input"
-                ></input>
-    
-                <label
-                    class="custom-control-label"
-                    for="customRadioInline3"
-                >
-                    Multiplicación
-                </label>
-            </div>
-
-        <br>
-        <br>
-
         <button
+            OnClick="calc()";
             type="submit"
             class="btn btn-primary"
         >Correr</button>
     </div>
-</body>
+    <script>
+            var defaultAction = function(initial, action, elements){
+                var value = initial;
+                for(var element of elements) value = action(element, value);
+                return value;
+            }
+    
+            var getF1 = function(){
+                switch(document.getElementById('fun1').value){
+                    case 'suma': 
+                        return function(element, cValue) {
+                            return element + cValue;
+                        };
+                    case 'mult': 
+                        return function(element, cValue) {
+                            return element * cValue;
+                        };
+                    case 'max': 
+                        return function(element, cValue) {
+                            if(element > cValue) return element;
+                            return cValue;
+                        };
+                    case 'min': 
+                        return function(element, cValue) {
+                            if(element < cValue) return element;
+                            return cValue;
+                        };
+                }
+            }
+    
+            var getInitial = function(){
+                switch(document.getElementById('fun1').value){
+                    case 'suma': 
+                        return 0;
+                    case 'mult': 
+                        return 1;
+                    case 'max': 
+                        return Number.MIN_VALUE;
+                    case 'min': 
+                        return Numer.MIN_VALUE;
+                }
+            }
+    
+            var getF2 = function(){
+                switch(document.getElementById('fun2').value){
+                    case 'x2': 
+                        return function(value){ return value * 2;};
+                    case 'pow': 
+                        return function(value){return value * value;};
+                    case 'p1': 
+                        return function(value){ return value + 1;};
+                    case 'sum': 
+                        return function(value){ return ((value + 1) * value)/2;};
+    
+                }
+            } 
+    
+            var getElements = function(){
+                switch(document.getElementById('elements').value){
+                    case '1': 
+                        return [1, 2, 3, 4];
+                    case '2': 
+                        return [2, 1, 3, 0];
+                    case '3': 
+                        return [10, 15, 2, 60];
+                    case '4': 
+                        return [10, 9, 8, 7];
+                }
+            }
+    
+            function calc(){
+                console.log("Calking");
+                var f2 = getF2();
+                alert(f2(defaultAction(getInitial(), getF1(), getElements())));
+            }
+            
+            
+        </script>
+    
+
+    </body>
 </html>
